@@ -12,5 +12,5 @@ export type JsonRpcResponse = | {
 } | {
     jsonrpc: "2.0",
     error: { code: number; message: string };
-    id: string | number;
+    id: string | number | null;
 }
