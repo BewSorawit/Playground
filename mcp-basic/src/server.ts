@@ -1,7 +1,7 @@
 import {createServer} from "node:http";
 
-import type {JsonRpcRequest, JsonRpcResponse} from "./types/types.js";
-import {tools} from "./tools/tools.js";
+import {handleRpc} from "./rpc/index.js";
+import type {JsonRpcRequest} from "./types/jsonrpc.js";
 
 
 const server = createServer(async (req, res) => {
@@ -13,41 +13,14 @@ const server = createServer(async (req, res) => {
     req.on("data", chunk => body += chunk);
     req.on("end", () => {
         const rpc: JsonRpcRequest = JSON.parse(body);
-        console.log(rpc)
 
-        const tool = tools[rpc.method];
-        console.log(tool)
-        if (!tool) {
-            if (rpc.id === undefined) {
-                res.end();
-                return;
-            }
+        const response = handleRpc(rpc);
 
-            const error: JsonRpcResponse = {
-                jsonrpc: "2.0",
-                error: {
-                    code: -32601,
-                    message: "Method not found"
-                },
-                id: rpc.id,
-            };
-
-            res.setHeader("Content-Type", "application/json");
-            res.end(JSON.stringify(error));
-            return;
-        }
-        const result = tool(rpc.params)
-        console.log(result)
-        if (rpc.id === undefined) {
+        if (!response) {
             res.end()
             return;
         }
 
-        const response: JsonRpcResponse = {
-            jsonrpc: "2.0",
-            result,
-            id: rpc.id
-        }
         res.setHeader("Content-Type", "application/json")
         res.end(JSON.stringify(response))
     })
