@@ -1,10 +1,13 @@
 import fetch from "node-fetch";
-import { loadPrompt } from "./prompt.js";
-import { config } from "./config.js";
-import type { JsonRpcRequest } from "./types/jsonrpc.js";
+import {loadPrompt} from "./prompt.js";
+import {config} from "./config.js";
+import type {JsonRpcRequest} from "./types/jsonrpc.js";
 
 type OllamaResponse = {
-    response?: string;
+    message?: {
+        role: string;
+        content: string;
+    }
 };
 
 function parseJsonRpcRequest(raw: string): JsonRpcRequest {
@@ -33,17 +36,18 @@ export async function routeToRpc(
 ): Promise<JsonRpcRequest> {
     const prompt = loadPrompt("router", {
         TOOLS: toolsDescription,
-        USER_REQUEST: userRequest,
     });
 
     const response = await fetch(config.ollamaUrl, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
-            model: "llama3",
-            prompt,
+            model: config.ollamaModel,
             stream: false,
-            format: "json",
+            messages: [
+                {role: "system", content: prompt},
+                {role: "user", content: userRequest}
+            ]
         }),
     });
 
@@ -55,9 +59,11 @@ export async function routeToRpc(
     }
 
     const data = (await response.json()) as OllamaResponse;
-    if (!data.response || typeof data.response !== "string") {
-        throw new Error("Ollama did not return a response payload");
-    }
 
-    return parseJsonRpcRequest(data.response);
+    const content = data.message?.content;
+
+    if (!content || typeof content !== "string") {
+        throw new Error("Ollama did not return chat content");
+    }
+    return parseJsonRpcRequest(content);
 }

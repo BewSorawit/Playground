@@ -9,8 +9,15 @@ Rules:
 - The object MUST contain: jsonrpc, method, params
 - id is optional (omit for notifications)
 
+IMPORTANT:
+- Output MUST be valid JSON only
+- Do NOT include any text before or after the JSON
+- Do NOT explain anything
+- Do NOT use markdown
+
 TOOLS:
 {{TOOLS}}
 
-User request:
-"{{USER_REQUEST}}"
+FINAL INSTRUCTION:
+- Output MUST start with { and end with }
+- If you cannot produce a valid JSON-RPC request, output {}
