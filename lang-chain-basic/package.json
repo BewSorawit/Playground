@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "dev" : "tsx src/main.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0"
+  }
+}
