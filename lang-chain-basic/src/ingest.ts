@@ -12,6 +12,4 @@ export function ingest(store: VectorStore, doc: { source: string, text: string }
             metadata: {source: doc.source}
         });
     });
-
-    console.log(store.items)
 }
