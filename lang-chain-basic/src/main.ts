@@ -1,6 +1,7 @@
 import {VectorStore} from "./vectorStore";
 import {ingest} from "./ingest";
 import {retrieve} from "./search.";
+import {buildPrompt} from "./generate";
 
 const store: VectorStore = new VectorStore();
 
@@ -13,9 +14,9 @@ Timeout and retry should be used together with circuit breaker.
 `
 });
 
-
-
 const question = "How to prevent cascading failure in microservice?";
-const results = retrieve(store,question)
+const results = retrieve(store, question)
 
-console.log(results)
+const prompt = buildPrompt(question, results.map(r => r.text))
+
+console.log(prompt)
