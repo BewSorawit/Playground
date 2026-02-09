@@ -1,9 +1,9 @@
 import {VectorStore} from "./vectorStore";
 import {ingest} from "./ingest";
-import {retrieve} from "./search.";
 import {buildPrompt} from "./generate";
+import {retrieve} from "./search.";
 
-const store: VectorStore = new VectorStore();
+const store: VectorStore = new VectorStore(64);
 
 ingest(store, {
     source: "doc-1",

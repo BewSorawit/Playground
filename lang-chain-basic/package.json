@@ -1,8 +1,11 @@
 {
   "scripts": {
-    "dev" : "tsx src/main.ts"
+    "dev": "tsx src/main.ts"
   },
   "devDependencies": {
     "tsx": "^4.21.0"
+  },
+  "dependencies": {
+    "hnswlib-node": "^3.0.0"
   }
 }
